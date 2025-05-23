@@ -34,7 +34,7 @@
                     <?php foreach ($stock as $item): ?>
                         <div class="row mb-2">
                             <div class="col">
-                                <input type="text" name="variations[]" class="form-control" value="<?= htmlspecialchars($item->variation) ?>">
+                                <input type="text" name="variations[]" class="form-control text-uppercase" style="text-transform: uppercase;">
                             </div>
                             <div class="col">
                                 <input type="number" name="quantities[]" class="form-control" value="<?= $item->quantity ?>">

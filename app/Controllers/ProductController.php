@@ -46,7 +46,7 @@ class ProductController
             foreach ($_POST['variations'] as $i => $variation) {
                 $stock = new Stock([
                     'product_id' => $productId,
-                    'variation' => $variation,
+                    'variation' => strtoupper($variation),
                     'quantity' => $_POST['quantities'][$i],
                 ]);
                 $this->stockRepo->create($stock);
@@ -110,5 +110,20 @@ class ProductController
         $options = array_map(fn($v) => $v->variation, $variations);
 
         echo json_encode($options);
+    }
+
+    public function delete()
+    {
+        $id = $_POST['id'] ?? null;
+        if (!$id) {
+            header('Location: /');
+            exit;
+        }
+
+        $this->productRepo->delete((int) $id);
+        $this->stockRepo->deleteByProduct((int) $id); // opcional, ON DELETE CASCADE já resolve
+
+        header('Location: /');
+        exit;
     }
 }

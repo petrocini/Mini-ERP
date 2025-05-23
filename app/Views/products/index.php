@@ -32,7 +32,7 @@
                 <div id="variations">
                     <div class="row mb-2">
                         <div class="col">
-                            <input type="text" name="variations[]" placeholder="Ex: Tamanho M" class="form-control">
+                            <input type="text" name="variations[]" class="form-control text-uppercase" style="text-transform: uppercase;">
                         </div>
                         <div class="col">
                             <input type="number" name="quantities[]" placeholder="Quantidade" class="form-control">
@@ -52,6 +52,10 @@
                 <li>
                     <?= htmlspecialchars($product->name) ?> - R$<?= number_format($product->price, 2, ',', '.') ?>
                     <a href="/product/edit?id=<?= $product->id ?>" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <form action="/product/delete" method="POST" onsubmit="return confirm('Deseja excluir este produto?')" class="d-inline">
+                        <input type="hidden" name="id" value="<?= $product->id ?>">
+                        <button class="btn btn-sm btn-outline-danger">Excluir</button>
+                    </form>
 
                     <form action="/cart/add" method="POST" class="mt-2 d-flex align-items-center gap-2">
                         <input type="hidden" name="product_id" value="<?= $product->id ?>">

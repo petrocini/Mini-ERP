@@ -26,3 +26,5 @@ Router::post('/webhook', 'OrderController@webhook');
 Router::get('/api/variations', 'ProductController@variations');
 
 Router::get('/cart/clear', 'CartController@clear');
+
+Router::post('/product/delete', 'ProductController@delete');
