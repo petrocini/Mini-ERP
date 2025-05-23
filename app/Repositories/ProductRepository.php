@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Product;
-use Database;
+use App\Config\Database;
 
 class ProductRepository {
     private \PDO $db;

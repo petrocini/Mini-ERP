@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Config\Database;
 use App\Models\Stock;
-use Database;
 
 class StockRepository {
     private \PDO $db;

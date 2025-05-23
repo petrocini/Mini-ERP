@@ -2,7 +2,7 @@
     "name": "lucas/mini-erp",
     "autoload": {
         "psr-4": {
-            "Lucas\\MiniErp\\": "app/"
+            "App\\": "app/"
         }
     },
     "authors": [

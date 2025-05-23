@@ -43,4 +43,43 @@ class ProductController {
         header('Location: /');
         exit;
     }
+
+    public function edit() {
+    $id = $_GET['id'] ?? null;
+    if (!$id) {
+        header('Location: /');
+        exit;
+    }
+
+    $product = $this->productRepo->find((int) $id);
+    $stock = $this->stockRepo->findByProduct((int) $id);
+
+    require __DIR__ . '/../Views/products/edit.php';
+}
+
+public function update() {
+    $product = new Product([
+        'id' => $_POST['id'],
+        'name' => $_POST['name'],
+        'price' => $_POST['price']
+    ]);
+
+    $this->productRepo->update($product);
+
+    // Atualiza variações
+    $this->stockRepo->deleteByProduct($product->id);
+
+    foreach ($_POST['variations'] as $i => $variation) {
+        $stock = new Stock([
+            'product_id' => $product->id,
+            'variation' => $variation,
+            'quantity' => $_POST['quantities'][$i],
+        ]);
+        $this->stockRepo->create($stock);
+    }
+
+    header('Location: /');
+    exit;
+}
+
 }
