@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Order;
+use App\Repositories\CouponRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\StockRepository;
@@ -50,19 +51,26 @@ class CartController
 
     public function view()
     {
+        if (session_status() === PHP_SESSION_NONE) session_start();
         $cart = $_SESSION['cart'] ?? [];
+        $couponCode = $_SESSION['coupon'] ?? null;
 
-        $subtotal = 0;
-        foreach ($cart as $item) {
-            $subtotal += $item['price'] * $item['quantity'];
+        $subtotal = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cart));
+        $frete = ($subtotal >= 52 && $subtotal <= 166.59) ? 15 : ($subtotal > 200 ? 0 : 20);
+        $desconto = 0;
+
+        if ($couponCode) {
+            $couponRepo = new CouponRepository();
+            $coupon = $couponRepo->findByCode($couponCode);
+
+            if ($coupon && strtotime($coupon->valid_until) >= strtotime(date('Y-m-d')) && $subtotal >= $coupon->min_value) {
+                $desconto = $subtotal * ($coupon->discount_percent / 100);
+            } else {
+                $couponCode = null; // invalida cupom
+            }
         }
 
-        // Regra de frete
-        $frete = 20.00;
-        if ($subtotal >= 52 && $subtotal <= 166.59) $frete = 15.00;
-        if ($subtotal > 200) $frete = 0;
-
-        $total = $subtotal + $frete;
+        $total = $subtotal + $frete - $desconto;
 
         require __DIR__ . '/../Views/cart/index.php';
     }
@@ -120,5 +128,13 @@ class CartController
         <h2>Pedido #$orderId finalizado com sucesso!</h2>
         <a href='/'>Voltar ao início</a>
     </div>";
+    }
+
+    public function applyCoupon()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $_SESSION['coupon'] = $_POST['coupon'];
+        header('Location: /cart');
+        exit;
     }
 }

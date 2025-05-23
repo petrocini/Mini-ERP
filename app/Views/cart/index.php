@@ -41,6 +41,21 @@
                 </tbody>
             </table>
 
+            <form action="/cart/coupon" method="POST" class="mb-3">
+                <div class="input-group">
+                    <input type="text" name="coupon" placeholder="Cupom de desconto" class="form-control" value="<?= $couponCode ?? '' ?>">
+                    <button class="btn btn-outline-primary">Aplicar</button>
+                </div>
+            </form>
+
+            <div class="alert alert-secondary">
+                <p><strong>Subtotal:</strong> R$<?= number_format($subtotal, 2, ',', '.') ?></p>
+                <p><strong>Frete:</strong> R$<?= number_format($frete, 2, ',', '.') ?></p>
+                <p><strong>Desconto:</strong> -R$<?= number_format($desconto, 2, ',', '.') ?></p>
+                <p><strong>Total:</strong> R$<?= number_format($total, 2, ',', '.') ?></p>
+            </div>
+
+
             <div class="alert alert-secondary">
                 <p><strong>Subtotal:</strong> R$<?= number_format($subtotal, 2, ',', '.') ?></p>
                 <p><strong>Frete:</strong> R$<?= number_format($frete, 2, ',', '.') ?></p>
