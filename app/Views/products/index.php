@@ -51,6 +51,13 @@
                 <li>
                     <?= htmlspecialchars($product->name) ?> - R$<?= number_format($product->price, 2, ',', '.') ?>
                     <a href="/product/edit?id=<?= $product->id ?>" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <form action="/cart/add" method="POST" class="mt-2 d-flex align-items-center gap-2">
+                        <input type="hidden" name="product_id" value="<?= $product->id ?>">
+                        <input type="text" name="variation" placeholder="variação" class="form-control" style="max-width: 120px;">
+                        <input type="number" name="quantity" value="1" class="form-control" style="max-width: 80px;">
+                        <button class="btn btn-sm btn-success">Comprar</button>
+                    </form>
+
                 </li>
             <?php endforeach; ?>
         </ul>
