@@ -16,7 +16,7 @@
     <div class="container">
         <h2>Carrinho</h2>
         <?php if (empty($cart)): ?>
-            <p>O carrinho está vazio.</p>
+            <p>O carrinho está vazio, volte para adicionar produtos.</p>
         <?php else: ?>
             <table class="table">
                 <thead>
@@ -56,9 +56,14 @@
             </div>
 
         <?php endif; ?>
-        <a href="/checkout" class="btn btn-primary">Finalizar Pedido</a>
+
+        <?php if (!empty($cart)): ?>
+            <a href="/checkout" class="btn btn-primary">Finalizar Pedido</a>
+        <?php endif; ?>
         <a href="/" class="btn btn-secondary">Voltar para Produtos</a>
-        <a href="/cart/clear" class="btn btn-danger ms-2">Limpar Carrinho</a>
+        <?php if (!empty($cart)): ?>
+            <a href="/cart/clear" class="btn btn-danger">Limpar Carrinho</a>
+        <?php endif; ?>
 
     </div>
 </body>
