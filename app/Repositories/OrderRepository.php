@@ -49,4 +49,16 @@ class OrderRepository
 
         return (int) $orderId;
     }
+
+    public function updateStatus(int $id, string $status): bool
+    {
+        $stmt = $this->db->prepare("UPDATE orders SET status = ? WHERE id = ?");
+        return $stmt->execute([$status, $id]);
+    }
+
+    public function delete(int $id): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM orders WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
 }

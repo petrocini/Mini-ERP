@@ -1,7 +1,6 @@
 <?php
 
 use App\Helpers\Router;
-use App\Controllers\CartController;
 
 Router::get('/', 'ProductController@index');
 Router::post('/product/create', 'ProductController@create');
@@ -21,3 +20,5 @@ Router::post('/checkout/save', 'CartController@saveOrder');
 Router::get('/cep', 'CartController@cepLookup');
 
 Router::post('/cart/coupon', 'CartController@applyCoupon');
+
+Router::post('/webhook', 'OrderController@webhook');
