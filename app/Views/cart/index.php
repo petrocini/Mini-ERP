@@ -41,12 +41,22 @@
                 </tbody>
             </table>
 
-            <form action="/cart/coupon" method="POST" class="mb-3">
-                <div class="input-group">
-                    <input type="text" name="coupon" placeholder="Cupom de desconto" class="form-control" value="<?= $couponCode ?? '' ?>">
-                    <button class="btn btn-outline-primary">Aplicar</button>
-                </div>
-            </form>
+            <?php if (empty($couponCode)): ?>
+                <form action="/cart/coupon" method="POST" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="coupon" placeholder="Cupom de desconto" class="form-control">
+                        <button class="btn btn-outline-primary">Aplicar</button>
+                    </div>
+                </form>
+            <?php else: ?>
+                <form action="/cart/coupon/remove" method="POST" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?= $couponCode ?>" disabled>
+                        <button class="btn btn-outline-danger">Remover</button>
+                    </div>
+                </form>
+            <?php endif; ?>
+
 
             <div class="alert alert-secondary">
                 <p><strong>Subtotal:</strong> R$<?= number_format($subtotal, 2, ',', '.') ?></p>

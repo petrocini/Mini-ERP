@@ -247,4 +247,12 @@ class CartController
             echo json_encode(['error' => 'Item não encontrado']);
         }
     }
+
+    public function removeCoupon()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        unset($_SESSION['coupon']);
+        header('Location: /cart');
+        exit;
+    }
 }

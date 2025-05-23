@@ -33,3 +33,4 @@ Router::post('/cart/add-ajax', 'CartController@addAjax');
 Router::get('/cart/items', 'CartController@itemsJson');
 
 Router::post('/cart/remove', 'CartController@remove');
+Router::post('/cart/coupon/remove', 'CartController@removeCoupon');
