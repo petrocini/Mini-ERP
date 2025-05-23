@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\StockRepository;
+use App\Services\MailService;
 
 class CartController
 {
@@ -110,6 +111,11 @@ class CartController
 
         unset($_SESSION['cart']);
 
+        $html = "<h2>Seu pedido foi confirmado!</h2>
+<p>Número do pedido: #{$orderId}</p>
+<p>Total: R$" . number_format($total, 2, ',', '.') . "</p>";
+
+        MailService::send($_POST['email'], "Confirmação de pedido #$orderId", $html);
         echo "<div style='padding:2rem;font-family:sans-serif;'>
         <h2>Pedido #$orderId finalizado com sucesso!</h2>
         <a href='/'>Voltar ao início</a>
