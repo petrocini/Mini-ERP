@@ -47,6 +47,8 @@
                 <p><strong>Total:</strong> R$<?= number_format($total, 2, ',', '.') ?></p>
             </div>
         <?php endif; ?>
+        <a href="/checkout" class="btn btn-primary">Finalizar Pedido</a>
+
         <a href="/" class="btn btn-secondary">Voltar para Produtos</a>
     </div>
 </body>
