@@ -1,0 +1,29 @@
+# Dependências do Composer
+/vendor/
+
+# Arquivos de ambiente e configs locais
+.env
+
+# Diretórios temporários e caches
+/cache/
+/tmp/
+*.log
+
+# IDEs e editores
+.vscode/
+.idea/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Relatórios e análises
+phpstan-result.cache
+phpcs.xml
+phpcbf.xml
+
+# PHPUnit (caso venha a usar futuramente)
+.phpunit.result.cache
+
+# Cobertura de testes (caso venha a usar futuramente)
+coverage/
