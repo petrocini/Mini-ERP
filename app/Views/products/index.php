@@ -51,16 +51,43 @@
                 <li>
                     <?= htmlspecialchars($product->name) ?> - R$<?= number_format($product->price, 2, ',', '.') ?>
                     <a href="/product/edit?id=<?= $product->id ?>" class="btn btn-sm btn-outline-primary">Editar</a>
+
                     <form action="/cart/add" method="POST" class="mt-2 d-flex align-items-center gap-2">
                         <input type="hidden" name="product_id" value="<?= $product->id ?>">
-                        <input type="text" name="variation" placeholder="variação" class="form-control" style="max-width: 120px;">
+                        <select name="variation" class="form-select variation-select" data-product-id="<?= $product->id ?>" style="max-width: 160px;">
+                            <option>Carregando...</option>
+                        </select>
                         <input type="number" name="quantity" value="1" class="form-control" style="max-width: 80px;">
                         <button class="btn btn-sm btn-success">Comprar</button>
                     </form>
-
                 </li>
             <?php endforeach; ?>
         </ul>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('.variation-select').forEach(select => {
+                    const productId = select.dataset.productId;
+
+                    fetch(`/api/variations?product_id=${productId}`)
+                        .then(res => res.json())
+                        .then(variations => {
+                            select.innerHTML = ''; // limpa opções
+                            if (variations.length === 0) {
+                                select.innerHTML = '<option value="">Sem variações</option>';
+                            } else {
+                                variations.forEach(v => {
+                                    const opt = document.createElement('option');
+                                    opt.value = v;
+                                    opt.textContent = v;
+                                    select.appendChild(opt);
+                                });
+                            }
+                        });
+                });
+            });
+        </script>
+
 
     </div>
 

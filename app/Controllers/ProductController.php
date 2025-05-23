@@ -7,21 +7,25 @@ use App\Models\Stock;
 use App\Repositories\ProductRepository;
 use App\Repositories\StockRepository;
 
-class ProductController {
+class ProductController
+{
     private ProductRepository $productRepo;
     private StockRepository $stockRepo;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->productRepo = new ProductRepository();
         $this->stockRepo = new StockRepository();
     }
 
-    public function index() {
+    public function index()
+    {
         $products = $this->productRepo->all();
         require __DIR__ . '/../Views/products/index.php';
     }
 
-    public function store() {
+    public function store()
+    {
         $product = new Product([
             'name' => $_POST['name'],
             'price' => $_POST['price'],
@@ -44,42 +48,58 @@ class ProductController {
         exit;
     }
 
-    public function edit() {
-    $id = $_GET['id'] ?? null;
-    if (!$id) {
+    public function edit()
+    {
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            header('Location: /');
+            exit;
+        }
+
+        $product = $this->productRepo->find((int) $id);
+        $stock = $this->stockRepo->findByProduct((int) $id);
+
+        require __DIR__ . '/../Views/products/edit.php';
+    }
+
+    public function update()
+    {
+        $product = new Product([
+            'id' => $_POST['id'],
+            'name' => $_POST['name'],
+            'price' => $_POST['price']
+        ]);
+
+        $this->productRepo->update($product);
+
+        // Atualiza variações
+        $this->stockRepo->deleteByProduct($product->id);
+
+        foreach ($_POST['variations'] as $i => $variation) {
+            $stock = new Stock([
+                'product_id' => $product->id,
+                'variation' => $variation,
+                'quantity' => $_POST['quantities'][$i],
+            ]);
+            $this->stockRepo->create($stock);
+        }
+
         header('Location: /');
         exit;
     }
+    public function variations()
+    {
+        header('Content-Type: application/json');
 
-    $product = $this->productRepo->find((int) $id);
-    $stock = $this->stockRepo->findByProduct((int) $id);
+        $productId = $_GET['product_id'] ?? null;
+        if (!$productId) {
+            echo json_encode([]);
+            return;
+        }
 
-    require __DIR__ . '/../Views/products/edit.php';
-}
+        $variations = $this->stockRepo->findByProduct((int) $productId);
+        $options = array_map(fn($v) => $v->variation, $variations);
 
-public function update() {
-    $product = new Product([
-        'id' => $_POST['id'],
-        'name' => $_POST['name'],
-        'price' => $_POST['price']
-    ]);
-
-    $this->productRepo->update($product);
-
-    // Atualiza variações
-    $this->stockRepo->deleteByProduct($product->id);
-
-    foreach ($_POST['variations'] as $i => $variation) {
-        $stock = new Stock([
-            'product_id' => $product->id,
-            'variation' => $variation,
-            'quantity' => $_POST['quantities'][$i],
-        ]);
-        $this->stockRepo->create($stock);
+        echo json_encode($options);
     }
-
-    header('Location: /');
-    exit;
-}
-
 }
