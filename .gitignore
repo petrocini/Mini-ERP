@@ -27,3 +27,5 @@ phpcbf.xml
 
 # Cobertura de testes (caso venha a usar futuramente)
 coverage/
+
+/mysql-data/
