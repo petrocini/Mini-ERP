@@ -1,0 +1,21 @@
+{
+    "name": "lucas/mini-erp",
+    "autoload": {
+        "psr-4": {
+            "Lucas\\MiniErp\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Petrocini",
+            "email": "lucaspetrocinireis@hotmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.10",
+        "guzzlehttp/guzzle": "^7.9",
+        "vlucas/phpdotenv": "^5.6",
+        "respect/validation": "^2.4",
+        "filp/whoops": "^2.18"
+    }
+}
