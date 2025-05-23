@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Models\Order;
+use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\StockRepository;
 
@@ -81,5 +83,36 @@ class CartController
         $response = file_get_contents("https://viacep.com.br/ws/{$cep}/json/");
         header('Content-Type: application/json');
         echo $response;
+    }
+
+    public function saveOrder()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $cart = $_SESSION['cart'] ?? [];
+
+        $subtotal = array_sum(array_map(fn($i) => $i['price'] * $i['quantity'], $cart));
+        $frete = ($subtotal >= 52 && $subtotal <= 166.59) ? 15 : ($subtotal > 200 ? 0 : 20);
+        $total = $subtotal + $frete;
+
+        $order = new Order([
+            'subtotal' => $subtotal,
+            'shipping' => $frete,
+            'total' => $total,
+            'status' => 'pendente',
+            'customer_name' => $_POST['name'],
+            'customer_email' => $_POST['email'],
+            'customer_address' => $_POST['address'],
+            'cep' => $_POST['cep']
+        ]);
+
+        $orderRepo = new OrderRepository();
+        $orderId = $orderRepo->create($order, $cart);
+
+        unset($_SESSION['cart']);
+
+        echo "<div style='padding:2rem;font-family:sans-serif;'>
+        <h2>Pedido #$orderId finalizado com sucesso!</h2>
+        <a href='/'>Voltar ao início</a>
+    </div>";
     }
 }
