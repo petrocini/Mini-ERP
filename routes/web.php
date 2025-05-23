@@ -24,3 +24,5 @@ Router::post('/cart/coupon', 'CartController@applyCoupon');
 Router::post('/webhook', 'OrderController@webhook');
 
 Router::get('/api/variations', 'ProductController@variations');
+
+Router::get('/cart/clear', 'CartController@clear');

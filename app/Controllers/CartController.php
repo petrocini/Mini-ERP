@@ -25,7 +25,20 @@ class CartController
     {
         $productId = $_POST['product_id'];
         $variation = $_POST['variation'] ?? '';
-        $quantity = $_POST['quantity'] ?? 1;
+        $quantity = (int) ($_POST['quantity'] ?? 1);
+
+        // Verifica estoque disponível
+        $stock = $this->stockRepo->findByProduct((int) $productId);
+        $selectedStock = array_filter($stock, fn($s) => $s->variation === $variation);
+        $available = $selectedStock ? array_values($selectedStock)[0]->quantity : 0;
+
+        if ($quantity > $available) {
+            echo "<div style='padding:1rem;font-family:sans-serif;'>
+        <p><strong>Estoque insuficiente para $variation.</strong> Disponível: $available</p>
+        <a href='/'>Voltar</a>
+    </div>";
+            exit;
+        }
 
         $cart = $_SESSION['cart'] ?? [];
 
@@ -99,6 +112,18 @@ class CartController
         if (session_status() === PHP_SESSION_NONE) session_start();
         $cart = $_SESSION['cart'] ?? [];
 
+        $stockRepo = new StockRepository();
+
+        foreach ($cart as $item) {
+            $stock = $stockRepo->findByProduct((int) $item['product_id']);
+            foreach ($stock as $entry) {
+                if ($entry->variation === $item['variation']) {
+                    $entry->quantity -= $item['quantity'];
+                    $stockRepo->update($entry);
+                }
+            }
+        }
+
         $subtotal = array_sum(array_map(fn($i) => $i['price'] * $i['quantity'], $cart));
         $frete = ($subtotal >= 52 && $subtotal <= 166.59) ? 15 : ($subtotal > 200 ? 0 : 20);
         $total = $subtotal + $frete;
@@ -134,6 +159,15 @@ class CartController
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
         $_SESSION['coupon'] = $_POST['coupon'];
+        header('Location: /cart');
+        exit;
+    }
+
+    public function clear()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        unset($_SESSION['cart']);
+        unset($_SESSION['coupon']); // também limpa cupom, se tiver
         header('Location: /cart');
         exit;
     }

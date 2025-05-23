@@ -55,16 +55,11 @@
                 <p><strong>Total:</strong> R$<?= number_format($total, 2, ',', '.') ?></p>
             </div>
 
-
-            <div class="alert alert-secondary">
-                <p><strong>Subtotal:</strong> R$<?= number_format($subtotal, 2, ',', '.') ?></p>
-                <p><strong>Frete:</strong> R$<?= number_format($frete, 2, ',', '.') ?></p>
-                <p><strong>Total:</strong> R$<?= number_format($total, 2, ',', '.') ?></p>
-            </div>
         <?php endif; ?>
         <a href="/checkout" class="btn btn-primary">Finalizar Pedido</a>
-
         <a href="/" class="btn btn-secondary">Voltar para Produtos</a>
+        <a href="/cart/clear" class="btn btn-danger ms-2">Limpar Carrinho</a>
+
     </div>
 </body>
 
