@@ -15,3 +15,7 @@ Router::post('/product/update', 'ProductController@update');
 
 Router::post('/cart/add', 'CartController@add');
 Router::get('/cart', 'CartController@view');
+
+Router::get('/checkout', 'CartController@checkout');
+Router::post('/checkout/save', 'CartController@saveOrder');
+Router::get('/cep', 'CartController@cepLookup');

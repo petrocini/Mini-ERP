@@ -63,4 +63,23 @@ class CartController
 
         require __DIR__ . '/../Views/cart/index.php';
     }
+    public function checkout()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $cart = $_SESSION['cart'] ?? [];
+        $subtotal = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cart));
+        $frete = ($subtotal >= 52 && $subtotal <= 166.59) ? 15 : ($subtotal > 200 ? 0 : 20);
+        $total = $subtotal + $frete;
+
+        require __DIR__ . '/../Views/cart/checkout.php';
+    }
+
+    public function cepLookup()
+    {
+        $cep = $_GET['cep'];
+        $response = file_get_contents("https://viacep.com.br/ws/{$cep}/json/");
+        header('Content-Type: application/json');
+        echo $response;
+    }
 }
