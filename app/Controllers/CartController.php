@@ -167,8 +167,84 @@ class CartController
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
         unset($_SESSION['cart']);
-        unset($_SESSION['coupon']); // também limpa cupom, se tiver
-        header('Location: /cart');
-        exit;
+        unset($_SESSION['coupon']);
+        echo json_encode(['success' => true]);
+    }
+
+
+    public function addAjax()
+    {
+        header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $productId = $_POST['product_id'];
+        $variation = $_POST['variation'] ?? '';
+        $quantity = (int) ($_POST['quantity'] ?? 1);
+
+        // valida estoque como antes
+        $stock = $this->stockRepo->findByProduct((int) $productId);
+        $selectedStock = array_filter($stock, fn($s) => $s->variation === $variation);
+        $available = $selectedStock ? array_values($selectedStock)[0]->quantity : 0;
+
+        if ($quantity > $available) {
+            echo json_encode(['error' => "Estoque insuficiente: disponível $available"]);
+            return;
+        }
+
+        $key = "$productId:$variation";
+        $cart = $_SESSION['cart'] ?? [];
+
+        if (isset($cart[$key])) {
+            echo json_encode(['error' => 'Produto já adicionado ao carrinho']);
+            return;
+        }
+
+        $product = $this->productRepo->find($productId);
+        $cart[$key] = [
+            'product_id' => $productId,
+            'name' => $product->name,
+            'price' => $product->price,
+            'variation' => $variation,
+            'quantity' => $quantity
+        ];
+
+        $_SESSION['cart'] = $cart;
+
+        echo json_encode(['success' => true]);
+    }
+
+    public function itemsJson()
+    {
+        header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $cart = $_SESSION['cart'] ?? [];
+        $items = [];
+
+        foreach ($_SESSION['cart'] ?? [] as $key => $item) {
+            $items[] = [
+                'key' => $key,
+                'name' => $item['name'],
+                'variation' => $item['variation'],
+                'quantity' => $item['quantity'],
+                'unit' => $item['price']
+            ];
+        }
+
+        echo json_encode($items);
+    }
+
+    public function remove()
+    {
+        header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $key = $_POST['key'] ?? null;
+        if ($key && isset($_SESSION['cart'][$key])) {
+            unset($_SESSION['cart'][$key]);
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['error' => 'Item não encontrado']);
+        }
     }
 }

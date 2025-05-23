@@ -28,3 +28,8 @@ Router::get('/api/variations', 'ProductController@variations');
 Router::get('/cart/clear', 'CartController@clear');
 
 Router::post('/product/delete', 'ProductController@delete');
+
+Router::post('/cart/add-ajax', 'CartController@addAjax');
+Router::get('/cart/items', 'CartController@itemsJson');
+
+Router::post('/cart/remove', 'CartController@remove');
