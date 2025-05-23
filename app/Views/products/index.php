@@ -23,8 +23,9 @@
 
             <div class="mb-3">
                 <label class="form-label">Preço</label>
-                <input type="number" step="0.01" name="price" class="form-control" required>
+                <input type="text" name="price" id="price" class="form-control" required>
             </div>
+
 
             <div class="mb-3">
                 <label>Variações e Estoque</label>
@@ -34,7 +35,7 @@
                             <input type="text" name="variations[]" placeholder="Ex: Tamanho M" class="form-control">
                         </div>
                         <div class="col">
-                            <input type="number" name="quantities[]" placeholder="Qtd" class="form-control">
+                            <input type="number" name="quantities[]" placeholder="Quantidade" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -64,31 +65,6 @@
             <?php endforeach; ?>
         </ul>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                document.querySelectorAll('.variation-select').forEach(select => {
-                    const productId = select.dataset.productId;
-
-                    fetch(`/api/variations?product_id=${productId}`)
-                        .then(res => res.json())
-                        .then(variations => {
-                            select.innerHTML = ''; // limpa opções
-                            if (variations.length === 0) {
-                                select.innerHTML = '<option value="">Sem variações</option>';
-                            } else {
-                                variations.forEach(v => {
-                                    const opt = document.createElement('option');
-                                    opt.value = v;
-                                    opt.textContent = v;
-                                    select.appendChild(opt);
-                                });
-                            }
-                        });
-                });
-            });
-        </script>
-
-
     </div>
 
     <script>
@@ -103,5 +79,58 @@
         }
     </script>
 </body>
+
+<script>
+    const priceInput = document.getElementById('price');
+
+    function formatCurrency(value) {
+        // Remove tudo que não for número
+        const clean = value.replace(/\D/g, '');
+        const num = parseFloat(clean) / 100;
+
+        // Se não for número válido, retorna 0,00
+        if (isNaN(num)) return 'R$ 0,00';
+
+        return 'R$ ' + num.toFixed(2).replace('.', ',');
+    }
+
+    function parseCurrency(value) {
+        return value
+            .replace(/\s/g, '')
+            .replace('R$', '')
+            .replace('.', '')
+            .replace(',', '.');
+    }
+
+    priceInput.addEventListener('input', () => {
+        priceInput.value = formatCurrency(priceInput.value);
+    });
+
+    priceInput.addEventListener('blur', () => {
+        priceInput.value = formatCurrency(priceInput.value);
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.variation-select').forEach(select => {
+            const productId = select.dataset.productId;
+
+            fetch(`/api/variations?product_id=${productId}`)
+                .then(res => res.json())
+                .then(variations => {
+                    select.innerHTML = ''; // limpa opções
+                    if (variations.length === 0) {
+                        select.innerHTML = '<option value="">Sem variações</option>';
+                    } else {
+                        variations.forEach(v => {
+                            const opt = document.createElement('option');
+                            opt.value = v;
+                            opt.textContent = v;
+                            select.appendChild(opt);
+                        });
+                    }
+                });
+        });
+    });
+</script>
+
 
 </html>

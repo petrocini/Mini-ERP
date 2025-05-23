@@ -26,9 +26,18 @@ class ProductController
 
     public function store()
     {
+        $rawPrice = $_POST['price'] ?? 'R$ 0,00';
+        $cleanPrice = str_replace(['R$', '.', ','], ['', '', '.'], $rawPrice);
+        $price = floatval($cleanPrice);
+
+        // Garantir que seja número válido
+        if (!is_numeric($price)) {
+            $price = 0.00;
+        }
+
         $product = new Product([
             'name' => $_POST['name'],
-            'price' => $_POST['price'],
+            'price' => floatval($price),
         ]);
 
         $productId = $this->productRepo->create($product);
